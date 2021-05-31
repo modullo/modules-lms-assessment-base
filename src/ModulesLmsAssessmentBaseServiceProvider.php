@@ -1,10 +1,9 @@
 <?php
 
-namespace Lms\ModulesLmsAssessmentBase;
-
+namespace Modullo\ModulesLmsAssessmentBase;
 use Illuminate\Support\ServiceProvider;
 
-class ModulesLmsAssessmentBaseServiceProvider   extends ServiceProvider
+class ModulesLmsAssessmentBaseServiceProvider extends ServiceProvider
 {
     public function boot()
     {

@@ -1,7 +1,6 @@
 {
-  "name": "lms/modules-lms-assessment-base",
+  "name": "modullo/modules-lms-assessment-base",
   "description": "description",
-  "minimum-stability": "library",
   "license": "GPL-3.0-or-later",
   "authors": [
     {
@@ -23,13 +22,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Lms\\ModulesLmsAssessmentBase\\": "src/"
+      "Modullo\\ModulesLmsAssessmentBase\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Lms\\ModulesLmsAssessmentBase\\ModulesLmsAssessmentBaseServiceProvider"
+        "Modullo\\ModulesLmsAssessmentBase\\ModulesLmsAssessmentBaseServiceProvider"
       ]
     }
   },

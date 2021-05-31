@@ -1,6 +1,6 @@
 <?php
 
-namespace Lms\ModulesLmsAssessmentBase\Http\Controllers;
+namespace Modullo\ModulesLmsAssessmentBase\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 

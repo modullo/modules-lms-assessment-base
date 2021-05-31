@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Lms\ModulesLmsAssessmentBase\Http\Controllers\ModulesLmsAssessmentBaseController;
+use Modullo\ModulesLmsAssessmentBase\Http\Controllers\ModulesLmsAssessmentBaseController;
 
-Route::group(['namespace' => 'Lms\ModulesLmsAssessmentBase\Http\Controllers','middleware' => 'web'],function() {
+Route::group(['namespace' => 'Modullo\ModulesLmsAssessmentBase\Http\Controllers','middleware' => 'web'],function() {
 
     Route::group(['prefix' => 'learner'],function(){
         Route::group(['prefix' => 'courses'],function() {
