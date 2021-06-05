@@ -2,14 +2,14 @@ Vue.component('lesson-tabs', {
     template: 
     `
     <div class="m-4 ml-5">
-    <b-tabs content-class="mt-3">
+    <b-tabs active-nav-item-class="font-weight-bold text-uppercase" content-class="mt-3">
         <div v-if="mobileDisplay">
-        <b-tab title="Course Content" active>
-            <sidebar-item></sidebar-item>
+        <b-tab title="Course Content" :title-link-class="linkClass()" active>
+            <sidebar-item :currentPlayingVideo="listener" @send-video-to-sidebar="collectVideoFromSideBar"></sidebar-item>
         </b-tab>
         </div>
 
-        <b-tab title="Overview">
+        <b-tab title="Overview" style="margin-bottom: 10em;" :title-link-class="linkClass()">
         <b-container>
          <b-row>
             <b-col lg="8" offset-lg="2">
@@ -24,7 +24,7 @@ Vue.component('lesson-tabs', {
          </b-row>
         </b-container>
         </b-tab>
-        <b-tab title="Notes">
+        <b-tab title="Notes" :title-link-class="linkClass()">
         <b-container class="mb-5">
             <b-row>
                 <b-col>
@@ -49,6 +49,7 @@ Vue.component('lesson-tabs', {
     `,
     data() {
         return {
+            listener: {},
             view: 'display:none',
             selected: null,
             options: [
@@ -62,11 +63,20 @@ Vue.component('lesson-tabs', {
             mobileDisplay: false,
         }
     },
+    destroyed: function () {
+        document.removeEventListener('resize', this.resizeForMobile);
+    },
     mounted() {
         this.resizeForMobile()
         window.addEventListener('resize', this.resizeForMobile)
     },
     methods: {
+        linkClass() {
+            return 'fix-tab'
+        },
+        collectVideoFromSideBar(payload) {
+            this.$emit('send-video-to-appwrapper', payload)
+        },
         resizeForMobile() {
             if (window.innerWidth < 991) {
                 this.mobileDisplay = true
