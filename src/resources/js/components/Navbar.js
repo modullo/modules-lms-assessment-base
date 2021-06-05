@@ -13,7 +13,7 @@ Vue.component('nav-bar', {
   
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item href="#" class="title-color">Introduction to objects and classes - 2020</b-nav-item>    
+          <b-nav-item href="#" class="title-color">Fullstack Laravel API development with Nuxt and Linux - 2020</b-nav-item>    
         </b-navbar-nav>
     
           <!-- Right aligned nav items -->

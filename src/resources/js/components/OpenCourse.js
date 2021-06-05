@@ -6,14 +6,14 @@ Vue.component('open-course', {
             <b-card class="text-center mt-5">
             <h3>Final Chapter: Quiz Section</h3>
             <b-card-body>This is The Quiz Section, You can start taking the questions now...</b-card-body>
-            <b-icon class="ml-3 chevron-style" @click="toggleVideo(currentVideo.index)" title="Go to Previous Course" icon="chevron-left" style="top:30%;left:0; position:absolute">Previous</b-icon>
-            <b-icon class="chevron-style chevron-next" @click="toggleVideo(currentVideo.index)" title="Go to Next Course" icon="chevron-right" style="top:40%;right:0;position:absolute">Next</b-icon>
+            <b-icon class="ml-3 chevron-style" @click="togglePreviousVideo(currentVideo.index)" title="Go to Previous Course" icon="chevron-left" style="top:30%;left:0; position:absolute">Previous</b-icon>
+            <b-icon v-if="(currentVideo.index + 1) !== videoLength" class="chevron-style chevron-next" @click="toggleNextVideo(currentVideo.index)" title="Go to Next Course" icon="chevron-right" style="top:40%;right:0;position:absolute">Next</b-icon>
                 <b-button @click="$bvModal.show('modal-lg')"><b-icon icon="question-octagon-fill" aria-hidden="true"></b-icon> Open Quiz Section</b-button>
             </b-card>
         </div>
-        <div v-else @change-video="selectedVideo" class="video-section pl-1" style="position:relative">
-            <b-icon class="ml-3 chevron-style" @click="toggleVideo(currentVideo.index)" title="Go to Previous Course" icon="chevron-left" style="top:40%;left:0; position:absolute">Previous</b-icon>
-            <b-icon class="chevron-style chevron-next" @click="toggleVideo(currentVideo.index)" title="Go to Next Course" icon="chevron-right" style="top:40%;right:0;position:absolute">Next</b-icon>
+        <div v-else class="video-section pl-1" style="position:relative">
+            <b-icon v-if="currentVideo.index !== 0" class="ml-3 chevron-style" @click="togglePreviousVideo(currentVideo.index)" title="Go to Previous Course" icon="chevron-left" style="top:40%;left:0; position:absolute">Previous</b-icon>
+            <b-icon v-if="(currentVideo.index + 1) !== videoLength" class="chevron-style chevron-next" @click="toggleNextVideo(currentVideo.index)" title="Go to Next Course" icon="chevron-right" style="top:40%;right:0;position:absolute">Next</b-icon>
             <iframe class="w-100" height="558" :src="currentVideo.url" title="YouTube video player" 
             frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen></iframe>
@@ -110,17 +110,17 @@ Vue.component('open-course', {
             },
             count: '',
             currentVideo: '',
+            videoLength: '',
         }
     },
     methods: {
-        selectedVideo() {
-            alert('video Selected')
-        },
         getAllVideo(single = null) {
             this.count = 0
             const pagination = this.videos.items.map((module) => {
                 return module.videos.map((video) => {
                     video.index = this.count++;
+                    video.module = module.id
+                    video.moduleTitle = module.name
                     return video;
                 })
             }).flat();
@@ -130,23 +130,36 @@ Vue.component('open-course', {
             }
             return pagination
         },
-        toggleVideo(index) {
-            const count = index + 1
+        togglePreviousVideo(index) {
+            const count = 2 + 1
+            if ((count) === Object.keys(this.getAllVideo()).length) {
+                // @de end
+                // alert('end')
+            }else {
+                index = index - 1
+                this.currentVideo = this.getAllVideo(true).filter((video) => {
+                    return video.index === index
+                })[0]
+                this.$emit('current-lesson', this.currentVideo)
+            }
+        },
+        toggleNextVideo(index) {
+            const count = 2 + 1
             if ((count) === Object.keys(this.getAllVideo()).length) {
                 // @de end
                 alert('end')
             }else {
-                index = index + 1
                 this.currentVideo = this.getAllVideo(true).filter((video) => {
-                    return video.index === index
+                    return video.index === index + 1
                 })[0]
-
+                this.$emit('current-lesson', this.currentVideo)
             }
         },
 
     },
     created() {
         this.getAllVideo()
+        this.videoLength = Object.keys(this.getAllVideo()).length
     }
     // width="1030" height="360" <video class="video-cover" src="../assets/video/video1.mp4" controls></video>
 })

@@ -25,11 +25,11 @@
         <nav-bar></nav-bar>
         <b-row>
             <b-col lg="9" class="col-remove-p main-section">
-                <open-course ref="childRef"></open-course>
-                <lesson-tabs></lesson-tabs>
+                <open-course @current-lesson="parentListenForLesson" ref="childRef"></open-course>
+                <lesson-tabs ref="mobileResponse"></lesson-tabs>
             </b-col>
             <b-col lg="3" class="col-remove-p">
-                <sidebar @send-video-to-appwrapper="setVideo"></sidebar>
+                <sidebar ref="sideContents" @send-video-to-appwrapper="setVideo"></sidebar>
             </b-col>
         </b-row>
         <quiz-questions :id="1"></quiz-questions>
