@@ -1,4 +1,10 @@
 Vue.component('nav-bar', {
+  props: {
+    courseData: {
+        type: Object,
+        default: () => {},
+    },
+  },
   template: `
     <div>
     <div class="navbar-container d-none d-lg-block">
@@ -13,7 +19,7 @@ Vue.component('nav-bar', {
   
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item href="#" class="title-color">Fullstack Laravel API development with Nuxt and Linux - 2020</b-nav-item>    
+          <b-nav-item href="#" class="title-color">{{courseData.title}}</b-nav-item>    
         </b-navbar-nav>
     
           <!-- Right aligned nav items -->
@@ -38,7 +44,7 @@ Vue.component('nav-bar', {
       <b-navbar class="p-3" type="dark" variant="dark">
       <b-icon icon="arrow-left" class="text-white font-weight-bold"></b-icon>
       <span class="text-white text-left pl-3" style="font-size: .9em;">
-        Fullstack Laravel API development with Nuxt and Linux - 2020
+      {{courseData.title}}
       </span>
       </b-navbar>
     </div>

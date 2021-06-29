@@ -22,14 +22,14 @@
 
     @include('modules-lms-base::navigation',['type' => 'learner'])
     <div id="app">
-        <nav-bar></nav-bar>
+        <nav-bar :course-data="courseData"></nav-bar>
         <b-row>
             <b-col lg="9" class="col-remove-p main-section">
-                <open-course @current-lesson="parentListenForLesson" ref="childRef"></open-course>
+                <open-course :course-data="courseData" @current-lesson="parentListenForLesson" ref="childRef"></open-course>
                 <lesson-tabs ref="mobileResponse"></lesson-tabs>
             </b-col>
             <b-col lg="3" class="col-remove-p">
-                <sidebar ref="sideContents" @send-video-to-appwrapper="setVideo"></sidebar>
+                <sidebar :course-data="courseData.modules" ref="sideContents" @send-video-to-appwrapper="setVideo"></sidebar>
             </b-col>
         </b-row>
         <quiz-questions :id="1"></quiz-questions>
@@ -46,7 +46,26 @@
     <script src="{{ asset('vendor/assessment/components/Chapter.js') }}"></script>
     <script src="{{ asset('vendor/assessment/components/QuizQuestions.js') }}"></script>
     <script src="{{ asset('vendor/assessment/components/Footer.js') }}"></script>
-    <script src="{{ asset('vendor/assessment/app.js') }}"></script>
+    {{-- <script src="{{ asset('vendor/assessment/app.js') }}"></script> --}}
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                name: 'Musah Musah!',
+                courseData: {!! json_encode($data) !!}
+            },
+            methods: {
+            setVideo(payload) {
+                // alert('videos' + payload)
+                this.$refs.childRef.currentVideo = payload
+            },
+            parentListenForLesson(payload) {
+                this.$refs.sideContents.listener = payload
+                this.$refs.sideContents.mobileResponse = payload
+            }
+            }
+        })
+    </script>
     <script>
         ClassicEditor
             .create( document.querySelector( '#editor' ) )

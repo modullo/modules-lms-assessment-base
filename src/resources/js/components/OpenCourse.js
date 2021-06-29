@@ -1,4 +1,10 @@
 Vue.component('open-course', {
+    props: {
+        courseData: {
+            type: Object,
+            default: () => {},
+        },
+    },
     template: 
     `
     <div>
