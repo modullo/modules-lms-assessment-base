@@ -9,7 +9,8 @@ Vue.component('sidebar', {
   `
   <div clas="sidebar" :class="{ fixed: fixedOrderPanel, sidebar: true }" style="height: 100vh">
       <div class="sidebar-header">Course Content</div>
-      <sidebar-item :course-data="courseData" :currentPlayingVideo="listener" @send-video-to-sidebar="collectVideoFromSideBar"></sidebar-item>
+      <sidebar-item @send-new-content-to-sidebar="collectNewContent" 
+      :course-data="courseData" :currentPlayingVideo="listener" @send-video-to-sidebar="collectVideoFromSideBar"></sidebar-item>
   </div>
   `,
   data() {
@@ -28,6 +29,9 @@ Vue.component('sidebar', {
     collectVideoFromSideBar(payload) {
       this.$emit('send-video-to-appwrapper', payload)
     },
+    collectNewContent(payload) {
+      this.$emit('send-new-content-to-appwrapper', payload)
+    },
     handleScroll: function(){
       const checkWindow = window !== undefined && window.scrollY;
 
@@ -45,5 +49,6 @@ Vue.component('sidebar', {
         }
       }
     }
+    // Emit New API data outside
   },
 })

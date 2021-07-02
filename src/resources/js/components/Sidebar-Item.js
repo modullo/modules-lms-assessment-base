@@ -12,17 +12,17 @@ Vue.component('sidebar-item', {
   template: 
   `
   <div class="accordion">
-    <b-card style="cursor:pointer" v-for="(module, index) in courseData" :key="index" no-body class="mb-1">
+    <b-card style="cursor:pointer;" v-for="(module, index) in courseData.modules" :key="index" no-body class="mb-1">
       <b-card-header v-b-toggle="'accordion-1' +index" style="display:block !important" header-tag="header" class="p-2 text-left" role="tab">
         <div block style="font-size: 1.08em !important;" class="text-left shadow-non module-title">{{module.title}}
           <b-icon class="float-right m-2 mr-3" icon="chevron-down"></b-icon>
         </div>
         <span class="module-duration-text" v-b-toggle="'accordion-1' +index">0 / {{courseData.length}} | 27min</span>
       </b-card-header>
-      <b-collapse :id="'accordion-1' +index" :style="visibility(index)" visibl accordion="my-accordion" role="tabpanel">
-        <b-card-body>
-          <chapter :videos="module.lessons" :currentPlayingVideo="currentPlayingVideo" 
-          ref="chapterRef" @change-video="check"></chapter>
+      <b-collapse :id="'accordion-1' +index" :style="visibility(module.module_number)" visibl accordion="my-accordion" role="tabpanel">
+        <b-card-body style="padding: 5px;">
+          <chapter :course-data="courseData" :videos="module.lessons" :currentPlayingVideo="currentPlayingVideo" 
+           @send-new-updated-content="collectNewCourseContent" ref="chapterRef" @change-video="check"></chapter>
         </b-card-body>
       </b-collapse>
     </b-card>
@@ -137,16 +137,26 @@ Vue.component('sidebar-item', {
         },
       }
   },
+  watch: {
+    currentPlayingVideo: function(newVal, oldVal) {
+      // this.$root.$emit('bv::toggle::collapse', 'accordion-10')
+      // alert('Prop changed: ', newVal, ' | was: ', oldVal)
+    }
+  },
   methods: {
     check(payload) {
       this.$emit('send-video-to-sidebar', payload)
     },
+    collectNewCourseContent(payload) {
+      this.$emit('send-new-content-to-sidebar', payload)
+    },
     visibility(video_id) {
-      if (this.currentPlayingVideo.module == video_id) {
+      if (this.currentPlayingVideo.moduleNumber == video_id) {
         return 'display:block'
       }
       return 'display:none'
     },
+    // Emit Event outside with new APi Course Data
   },
   mounted() {
     this.$root.$emit('bv::toggle::collapse', 'accordion-10')

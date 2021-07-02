@@ -4,17 +4,22 @@ Vue.component('open-course', {
             type: Object,
             default: () => {},
         },
+
     },
     template: 
     `
     <div>
-        <div class="video-section pl-1" style="position:relative" v-if="this.currentVideo.title === 'Quiz Section'">
-            <b-card class="text-center mt-5">
-            <h3>Final Chapter: Quiz Section</h3>
-            <b-card-body>This is The Quiz Section, You can start taking the questions now...</b-card-body>
-            <b-icon class="ml-3 chevron-style" @click="togglePreviousVideo(currentVideo.index)" title="Go to Previous Course" icon="chevron-left" style="top:30%;left:0; position:absolute">Previous</b-icon>
+        <div class="video-section pl-1" style="position:relative;" v-if="this.currentVideo.lesson_type === 'quiz'">
+            <b-card class="text-center" style="height: 40vh;">
+            <h3 class="mt-2">{{ currentVideo.moduleTitle }}: {{currentVideo.title}}</h3>
+            <b-card-body style="font-size:1.1em" v-html="currentVideo.description">This is The Quiz Section, You can start taking the questions now...</b-card-body>
+            <b-icon v-if="currentVideo.index !== 0" class="ml-3 chevron-style" @click="togglePreviousVideo(currentVideo.index)" title="Go to Previous Course" icon="chevron-left" style="top:40%;left:0; position:absolute">Previous</b-icon>
+            <course-quiz-questions @send-new-completed-course="emitCompletedCourse" 
+            :course-data="courseData" :quiz-data="quizData"  
+            :quiz="currentVideo" id="newguy"></course-quiz-questions>
+            
             <b-icon v-if="(currentVideo.index + 1) !== videoLength" class="chevron-style chevron-next" @click="toggleNextVideo(currentVideo.index)" title="Go to Next Course" icon="chevron-right" style="top:40%;right:0;position:absolute">Next</b-icon>
-                <b-button @click="$bvModal.show('modal-lg')"><b-icon icon="question-octagon-fill" aria-hidden="true"></b-icon> Open Quiz Section</b-button>
+                <b-button @click="callModal(currentVideo.id,currentVideo.lesson_resource.id)"><b-icon icon="question-octagon-fill" aria-hidden="true"></b-icon> Open Quiz Section</b-button>
             </b-card>
         </div>
         <div v-else class="video-section pl-1" style="position:relative">
@@ -117,9 +122,28 @@ Vue.component('open-course', {
             count: '',
             currentVideo: '',
             videoLength: '',
+            testView: '',
+            quizData: [],
         }
     },
     methods: {
+        emitCompletedCourse(payload) {
+            this.$emit('send-new-updated-content', payload)
+        },
+        callModal(modalId, quizId) {
+            this.$bvModal.show('modal-lg-new'+modalId);
+            let loader = Vue.$loading.show();
+            axios
+            .get(`/learner/courses/fetchQuiz/${quizId}`)
+            .then((res) => {
+                this.quizData = res.data.quiz
+                loader.hide();
+            // console.log(this.$refs.quizRef)
+            })
+            .catch(() => {
+            loader.hide();
+            })
+        },
         getAllVideo(single = null) {
             this.count = 0
             const pagination = this.videos.items.map((module) => {
@@ -136,14 +160,31 @@ Vue.component('open-course', {
             }
             return pagination
         },
+        filterAllVideo(single = null) {
+            this.count = 0
+            const pagination = this.courseData.modules.map((module) => {
+                return module.lessons.map((lesson) => {
+                    lesson.index = this.count++;
+                    lesson.moduleNumber = module.module_number
+                    lesson.moduleTitle = module.title
+                    return lesson;
+                })
+            }).flat();
+            if (single === null) {
+                this.currentVideo = pagination[0]
+                return pagination
+            }
+            this.testView = pagination
+            return pagination
+        },
         togglePreviousVideo(index) {
             const count = 2 + 1
-            if ((count) === Object.keys(this.getAllVideo()).length) {
+            if ((count) === Object.keys(this.filterAllVideo()).length) {
                 // @de end
                 // alert('end')
             }else {
                 index = index - 1
-                this.currentVideo = this.getAllVideo(true).filter((video) => {
+                this.currentVideo = this.filterAllVideo(true).filter((video) => {
                     return video.index === index
                 })[0]
                 this.$emit('current-lesson', this.currentVideo)
@@ -151,21 +192,28 @@ Vue.component('open-course', {
         },
         toggleNextVideo(index) {
             const count = 2 + 1
-            if ((count) === Object.keys(this.getAllVideo()).length) {
+            if ((count) === Object.keys(this.filterAllVideo()).length) {
                 // @de end
                 alert('end')
             }else {
-                this.currentVideo = this.getAllVideo(true).filter((video) => {
+                this.currentVideo = this.filterAllVideo(true).filter((video) => {
                     return video.index === index + 1
                 })[0]
                 this.$emit('current-lesson', this.currentVideo)
             }
         },
+        callFirstCourseContent() {
+            this.$emit('current-lesson', this.currentVideo)
+        },
 
     },
     created() {
-        this.getAllVideo()
-        this.videoLength = Object.keys(this.getAllVideo()).length
-    }
+        // this.getAllVideo()
+        this.filterAllVideo()
+        this.videoLength = Object.keys(this.filterAllVideo()).length
+    },
+    mounted() {
+        this.callFirstCourseContent()
+    },
     // width="1030" height="360" <video class="video-cover" src="../assets/video/video1.mp4" controls></video>
 })

@@ -21,12 +21,10 @@ body {
     cursor: pointer !important;
     /* transition: margin-top 110ms; */
 }
-.chapter-select-video:hover {
-    /* transition: 110ms linear;  */
+/* .chapter-select-video:hover {
     background-color: #f7f8fa;
-    /* margin-top: -1em; */
     width: 400px;
-}
+} */
 .selectedVideo {
     background-color: gainsboro;
 }

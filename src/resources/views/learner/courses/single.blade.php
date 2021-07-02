@@ -25,14 +25,15 @@
         <nav-bar :course-data="courseData"></nav-bar>
         <b-row>
             <b-col lg="9" class="col-remove-p main-section">
-                <open-course :course-data="courseData" @current-lesson="parentListenForLesson" ref="childRef"></open-course>
-                <lesson-tabs ref="mobileResponse"></lesson-tabs>
+                <open-course @send-new-updated-content="wrapperCollectNewContent" :course-data="courseData" @current-lesson="parentListenForLesson" ref="childRef"></open-course>
+                <lesson-tabs :course-data="courseData" ref="mobileResponse"></lesson-tabs>
             </b-col>
             <b-col lg="3" class="col-remove-p">
-                <sidebar :course-data="courseData.modules" ref="sideContents" @send-video-to-appwrapper="setVideo"></sidebar>
+                <sidebar @send-new-content-to-appwrapper="wrapperCollectNewContent" :course-data="courseData" ref="sideContents" @send-video-to-appwrapper="setVideo"></sidebar>
+                {{-- <sidebar :course-data="courseData.modules" ref="sideContents" @send-video-to-appwrapper="setVideo"></sidebar> --}}
             </b-col>
         </b-row>
-        <quiz-questions :id="1"></quiz-questions>
+        {{-- <quiz-questions :id="1"></quiz-questions> --}}
     </div>
 
 @endsection
@@ -45,7 +46,36 @@
     <script src="{{ asset('vendor/assessment/components/LessonTabs.js') }}"></script>
     <script src="{{ asset('vendor/assessment/components/Chapter.js') }}"></script>
     <script src="{{ asset('vendor/assessment/components/QuizQuestions.js') }}"></script>
+    <script src="{{ asset('vendor/assessment/components/CourseQuizQuestions.js') }}"></script>
     <script src="{{ asset('vendor/assessment/components/Footer.js') }}"></script>
+    <link href="https://unpkg.com/@morioh/v-quill-editor/dist/editor.css" rel="stylesheet">
+    <script src="https://unpkg.com/@morioh/v-quill-editor/dist/editor.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
+    <!-- Init the plugin and component-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        Vue.use(VueLoading);
+        Vue.component('loading', VueLoading)
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+            }
+    </script>
     {{-- <script src="{{ asset('vendor/assessment/app.js') }}"></script> --}}
     <script>
         var app = new Vue({
@@ -55,25 +85,28 @@
                 courseData: {!! json_encode($data) !!}
             },
             methods: {
-            setVideo(payload) {
-                // alert('videos' + payload)
-                this.$refs.childRef.currentVideo = payload
-            },
-            parentListenForLesson(payload) {
-                this.$refs.sideContents.listener = payload
-                this.$refs.sideContents.mobileResponse = payload
-            }
+                setVideo(payload) {
+                    // alert('videos' + payload)
+                    this.$refs.sideContents.listener = payload
+                    this.$refs.mobileResponse.tabsData = payload
+                    this.$refs.childRef.currentVideo = payload
+
+                    // this.$refs.sideContents.mobileResponse = payload
+                },
+                wrapperCollectNewContent(payload) {
+                    this.$refs.sideContents.listener = payload
+                    this.$refs.mobileResponse.tabsData = payload
+                    this.$refs.sideContents.mobileResponse = payload
+                    this.$root.$emit('bv::toggle::collapse', 'accordion-10')
+                },
+                parentListenForLesson(payload) {
+                    this.$refs.sideContents.listener = payload
+                    this.$refs.mobileResponse.tabsData = payload
+                    this.$refs.sideContents.mobileResponse = payload
+                }
             }
         })
     </script>
-    <script>
-        ClassicEditor
-            .create( document.querySelector( '#editor' ) )
-            .catch( error => {
-                console.error( error );
-            } );
-    </script>
-
 @endsection
 
 
