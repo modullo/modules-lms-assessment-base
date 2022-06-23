@@ -17,17 +17,6 @@ class ModulesLmsAssessmentBaseController extends Controller
         $this->sdk = $sdk;
     }
 
-    public function show(string $id, Sdk $sdk)
-    {
-        $sdkObject = $sdk->createCourseService();
-        $path = [$id];
-        $response = $sdkObject->send('get', $path);
-        if ($response->isSuccessful()){
-            $data = $response->data['course'];
-            return view('modules-lms-assessment-base::learner.courses.single', compact('data'));
-        }
-        $data = ['error' => 'unable to fetch the requested resource'];
-        return view('modules-lms-assessment-base::learner.courses.single', compact('data'));
-    }
+
     
 }
